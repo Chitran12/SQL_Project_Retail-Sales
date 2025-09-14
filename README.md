@@ -275,16 +275,11 @@ ORDER BY sale_day;
 ## Conclusion
 
 Developed end-to-end SQL solutions including database setup, data cleaning, and exploratory analysis to extract actionable insights on sales trends, customer behavior, and product performance, supporting informed business decisions. The insights derived from this project can inform strategic business decisions by highlighting sales trends, customer behavior, and product performance.
- 
-## How to Use
 
-1. **Clone the Repository**: Clone this project repository from GitHub.
-2. **Set Up the Database**: Run the SQL scripts provided in the `database_setup.sql` file to create and populate the database.
-3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
-4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
+ 
 
 ## Author - Chitran Khatri
 
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch in me on **LinkedIn**: (https://www.linkedin.com/in/chitrankhatri/)
+This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch in me on **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/chitrankhatri/)
 
 Thank you for your support, and I look forward to connecting with you!
