@@ -280,6 +280,6 @@ Developed end-to-end SQL solutions including database setup, data cleaning, and 
 
 ## Author - Chitran Khatri
 
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch in me on **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/chitrankhatri/)
+This project is part of my portfolio, showcasing the SQL skills essential for Data Analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch in me on **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/chitrankhatri/)
 
 Thank you for your support, and I look forward to connecting with you!
