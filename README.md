@@ -3,8 +3,8 @@
 ## Project Overview
 
 **Project Title**: Retail Sales Analysis  
-**Level**: Beginner  
-**Database**: `p1_retail_db`
+**Level**: Beginner to Advance  
+**Database**: `SQL Project`
 
 This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
 
@@ -23,9 +23,9 @@ This project is designed to demonstrate SQL skills and techniques typically used
 - **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
 
 ```sql
-CREATE DATABASE p1_retail_db;
+CREATE DATABASE SQL Project;;
 
-CREATE TABLE retail_sales
+CREATE TABLE Retail_Sales
 (
     transactions_id INT PRIMARY KEY,
     sale_date DATE,	
@@ -70,122 +70,194 @@ WHERE
 
 The following SQL queries were developed to answer specific business questions:
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
+1. **Retrieve all columns for sales made in November 2022**:
 ```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
+Select * 
+from Retail_Sales
+where  DATEPART(MONTH,sale_date)=11 and DATEPART(YEAR,sale_date)=2022;  	
 ```
 
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
+2. **Retrieve all transactions where the category is Clothing and the quantity sold is more than or equal to 3 in the month of Nov-2022**:
 ```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
+SELECT  * 
+FROM Retail_Sales
+WHERE  
+          category='Clothing' 
+          AND
+          DATEPART(MONTH,sale_date)=11 and DATEPART(YEAR,sale_date)=2022  	
+          AND 
+          quantity >= 3
 ```
 
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
+3. **Calculate the total sales for each product category**:
 ```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
-```
-
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
-```sql
-SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
+SELECT   
+       ROUND (AVG(age),2) as Avg_age
+FROM Retail_Sales
 WHERE category = 'Beauty'
 ```
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
+4. **Find the average age of customers who purchased items from the Beauty category**:
 ```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
+SELECT   
+       ROUND (AVG(age),2) as Avg_age
+FROM Retail_Sales
+WHERE category = 'Beauty'
 ```
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
+5. **Find the total number of transactions completed by each gender across different product categories**:
 ```sql
 SELECT 
     category,
     gender,
-    COUNT(*) as total_trans
-FROM retail_sales
+    COUNT(*) as Total_Transaction
+FROM Retail_Sales
 GROUP 
     BY 
     category,
     gender
-ORDER BY 1
+ORDER BY category
 ```
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
+6. **Calculate the average sales per month and determine the best-selling month of each year.**:
 ```sql
 SELECT 
-       year,
-       month,
+    year,
+    month,
     avg_sale
 FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
+(
+    SELECT 
+        YEAR(sale_date) AS year,
+        MONTH(sale_date) AS month,
+        AVG(total_sale) AS avg_sale,
+        RANK() OVER (
+            PARTITION BY YEAR(sale_date) 
+            ORDER BY AVG(total_sale) DESC
+        ) AS Rank
+    FROM Retail_Sales
+    GROUP BY YEAR(sale_date), MONTH(sale_date) AS t1
+WHERE Rank = 1
+ORDER BY year, avg_sale DESC;
 ```
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
+7. **Calculate the number of orders per shift that is for Morning: Before 12:00, Afternoon: Between 12:01 and 17:00, Evening: After 17:00,**:
+```sql
+WITH Hourly_sale AS
+(
+    SELECT *,
+        CASE
+            WHEN DATEPART(HOUR, sale_time) < 12 THEN 'Morning'
+            WHEN DATEPART(HOUR, sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
+            ELSE 'Evening'
+        END AS Shift
+    FROM Retail_Sales
+)
+SELECT 
+    Shift,
+    COUNT(*) AS Total_orders
+FROM Hourly_sale
+GROUP BY Shift
+```
+
+8. **Find if there is a spending difference between male and female customers in each category**:
+```sql
+SELECT 
+    category,
+    gender,
+    ROUND(SUM(total_sale), 2) AS total_spending,
+    ROUND(AVG(total_sale), 2) AS avg_spending_per_transaction
+FROM Retail_Sales
+GROUP BY category, gender
+ORDER BY category, total_spending DESC
+```
+
+9. **Find the repeat customers who made at least 3 purchases**:
 ```sql
 SELECT 
     customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
+    COUNT(DISTINCT transactions_id) AS purchase_count,
+    SUM(total_sale) AS total_spent
+FROM Retail_Sales
+GROUP BY customer_id
+HAVING COUNT(DISTINCT transactions_id) >= 3
+ORDER BY purchase_count DESC, total_spent DESC;
 ```
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
+10. **Identify peak shopping hours during the day (group sales by hour)**:
 ```sql
 SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
-FROM retail_sales
-GROUP BY category
+    DATEPART(HOUR, sale_time) AS sale_hour,
+    COUNT(*) AS total_sales,
+    SUM(total_sale) AS total_revenue
+FROM Retail_Sales
+GROUP BY DATEPART(HOUR, sale_time)
+ORDER BY total_sales DESC;
 ```
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
+11. **Find the category with the highest revenue contribution during weekends vs weekdays**:
 ```sql
-WITH hourly_sale
-AS
-(
-SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
+SELECT 
+    CASE 
+        WHEN DATENAME(WEEKDAY, sale_date) IN ('Saturday', 'Sunday') THEN 'Weekend'
+        ELSE 'Weekday'
+    END AS day_type,
+    category,
+    SUM(total_sale) AS total_revenue,
+    RANK() OVER (PARTITION BY 
+        CASE 
+            WHEN DATENAME(WEEKDAY, sale_date) IN ('Saturday', 'Sunday') THEN 'Weekend'
+            ELSE 'Weekday'
+        END
+        ORDER BY SUM(total_sale) DESC
+    ) AS revenue_rank
+FROM Retail_Sales
+GROUP BY 
+    CASE 
+        WHEN DATENAME(WEEKDAY, sale_date) IN ('Saturday', 'Sunday') THEN 'Weekend'
+        ELSE 'Weekday'
+    END,
+    category
+HAVING SUM(total_sale) IS NOT NULL;
+```
+
+12. **Find the top 3 categories for each gender**:
+```sql
+SELECT * FROM 
+(SELECT 
+    gender,
+    category,
+    SUM(total_sale) AS total_revenue,
+    RANK() OVER (
+        PARTITION BY gender 
+        ORDER BY SUM(total_sale) DESC
+    ) AS category_rank
+FROM Retail_Sales
+GROUP BY gender, category
+HAVING SUM(total_sale) IS NOT NULL) as t
+where category_rank <= 3; 
+```
+
+13. **Calculate the 30-day moving average revenue**:
+```sql
+WITH daily_revenue AS (
+    SELECT 
+        CAST(sale_date AS DATE) AS sale_day,
+        SUM(total_sale) AS daily_revenue
+    FROM Retail_Sales
+    GROUP BY CAST(sale_date AS DATE)
 )
 SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
-GROUP BY shift
+    sale_day,
+    daily_revenue,
+    AVG(daily_revenue) OVER (
+        ORDER BY sale_day
+        ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+    ) AS Moving_Avg_30day
+FROM daily_revenue
+ORDER BY sale_day;
 ```
+
 
 ## Findings
 
@@ -202,8 +274,8 @@ GROUP BY shift
 
 ## Conclusion
 
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
-
+Developed end-to-end SQL solutions including database setup, data cleaning, and exploratory analysis to extract actionable insights on sales trends, customer behavior, and product performance, supporting informed business decisions. The insights derived from this project can inform strategic business decisions by highlighting sales trends, customer behavior, and product performance.
+ 
 ## How to Use
 
 1. **Clone the Repository**: Clone this project repository from GitHub.
@@ -211,17 +283,8 @@ This project serves as a comprehensive introduction to SQL for data analysts, co
 3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
 4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
 
-## Author - Zero Analyst
+## Author - Chitran Khatri
 
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
-
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
+This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch in me on - **LinkedIn**: (https://www.linkedin.com/in/chitrankhatri/)
 
 Thank you for your support, and I look forward to connecting with you!
